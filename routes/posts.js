@@ -10,13 +10,42 @@ router.get('/:tags/:sortBy?/:direction?', function (req, res) {
   //change tagsArr
   const tagsArr = tags.split(',');
 
-  // console.log(tags, sortBy, direction);
-  axios
-    .get(`https://api.hatchways.io/assessment/blog/posts?tag=science`)
-    .then(res => console.log(res.data))
-    .catch(err => console.log(err));
+  if (tagsArr.length === 1) {
+    return axios
+      .get(
+        `https://api.hatchways.io/assessment/blog/posts?tag=${tags}&sortBy=${sortBy}&direction=${direction}`
+      )
+      .then(res => console.log('hi'))
+      .catch(err => console.log(err));
+  }
 
-  res.status(200).send('hi');
+  const urlArr = tagsArr.map(
+    tag =>
+      `https://api.hatchways.io/assessment/blog/posts?tag=${tag}&sortBy=${sortBy}&direction=${direction}`
+  );
+  console.log(
+    tagsArr.map(tag => {
+      console.log(tag);
+      return axios.get(
+        `https://api.hatchways.io/assessment/blog/posts?tag=${tag}&sortBy=${sortBy}&direction=${direction}`
+      );
+    })
+  );
+
+  Promise.all(
+    tagsArr.map(tag => {
+      console.log(tag);
+      console.log(sortBy);
+      console.log(direction);
+      return axios.get(
+        `https://api.hatchways.io/assessment/blog/posts?tag=${tag}&sortBy=${sortBy}&direction=${direction}`
+      );
+    })
+  ).then(all => {
+    [one, two] = all;
+    console.log([...one.data.posts, ...two.data.posts]);
+    res.status(200).send([...one.data.posts, ...two.data.posts]);
+  });
 });
 
 module.exports = router;
