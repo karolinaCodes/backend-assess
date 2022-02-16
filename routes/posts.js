@@ -8,13 +8,16 @@ router.get('/', function (req, res) {
 
 router.get('/:tags/:sortBy?/:direction?', function (req, res) {
   const {tags = ' ', sortBy = 'id', direction = 'asc'} = req.params;
+  const validValues = ['id', 'reads', 'likes', 'popularity', 'desc', 'asc'];
 
-  const errorString = '';
-
-  if (!tags) {
-    console.log('eher2');
-    res.json('error');
+  if (!validValues.includes(sortBy)) {
+    return res.status(400).json({error: 'sortBy parameter is invalid'});
   }
+
+  if (!validValues.includes(direction)) {
+    return res.status(400).json({error: 'direction parameter is invalid'});
+  }
+
   //change tagsArr
   const tagsArr = tags.split(',');
 
@@ -23,7 +26,7 @@ router.get('/:tags/:sortBy?/:direction?', function (req, res) {
       .get(
         `https://api.hatchways.io/assessment/blog/posts?tag=${tags}&sortBy=${sortBy}&direction=${direction}`
       )
-      .then(res => console.log('hi'))
+      .then(result => res.status(200).send(result.data))
       .catch(err => console.log(err));
   }
 
