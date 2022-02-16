@@ -13,12 +13,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Separated Routes for each Resource //
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const pingRouter = require('./routes/ping');
+const postsRouter = require('./routes/posts');
 
 // Mount all resource routes
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/ping', pingRouter);
+app.use('/api/posts', postsRouter);
 
 module.exports = app;
 
